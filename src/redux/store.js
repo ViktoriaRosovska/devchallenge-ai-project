@@ -4,20 +4,21 @@ import { persistStore, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 
 import { userChatReducer } from "./userChat/userChatSlice";
 import persistReducer from "redux-persist/es/persistReducer";
 import storage from "redux-persist/lib/storage";
+import { userAuthReducer } from "./userAuth/userAuthSlice";
 
 const persistConfig = {
   key: "auth",
   storage,
-  whitelist: ["token"],
 };
 
-const persistedRooReducer = persistReducer(persistConfig, userChatReducer);
+const persistedRootReducer = persistReducer(persistConfig, userAuthReducer);
 
 export const store = configureStore({
   reducer: {
-    userChat: persistedRooReducer,
+    userAuth: persistedRootReducer,
+    userChat: userChatReducer,
   },
-  middleware(getDefaultMiddleware) {
+  middleware: (getDefaultMiddleware) => {
     return getDefaultMiddleware({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
@@ -26,4 +27,5 @@ export const store = configureStore({
   },
 });
 
+export default store;
 export const persistor = persistStore(store);

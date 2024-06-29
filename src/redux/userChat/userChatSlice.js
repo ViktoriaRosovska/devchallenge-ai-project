@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getStartChat } from "./userChatOperations";
+import { getSendVoice, getStartChat, getStopChat } from "./userChatOperations";
 
 export const handlePending = (state) => {
   state.isLoading = true;
@@ -14,16 +14,31 @@ const userChatSlice = createSlice({
   name: "userChat",
   initialState: {
     startTheme: {},
+    voice: null,
+    result: {},
   },
   extraReducers: (builder) =>
     builder
       .addCase(getStartChat.pending, handlePending)
       .addCase(getStartChat.fulfilled, (state, action) => {
-        state.startTheme.push(action.payload.result);
+        state.startTheme = action.payload;
         state.isLoading = false;
         state.error = null;
       })
-      .addCase(getStartChat.rejected, handleRejected),
+      .addCase(getStartChat.rejected, handleRejected)
+      .addCase(getSendVoice.pending, handlePending)
+      .addCase(getSendVoice.fulfilled, (state, action) => {
+        state.voice = action.payload;
+        state.isLoading = false;
+        state.error = null;
+      })
+      .addCase(getStopChat.rejected, handleRejected)
+      .addCase(getStopChat.pending, handlePending)
+      .addCase(getStopChat.fulfilled, (state, action) => {
+        state.result = action.payload;
+        state.isLoading = false;
+        state.error = null;
+      }),
 });
 
 export const userChatReducer = userChatSlice.reducer;
